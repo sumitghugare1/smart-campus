@@ -3,14 +3,20 @@ const fs = require('fs');
 require('dotenv').config();
 
 let dbInstance = null;
+const configuredDatabaseUrl = (process.env.DATABASE_URL || process.env.POSTGRES_URL || '')
+  .trim()
+  .replace(/^['"]|['"]$/g, '');
 
-if (process.env.DATABASE_URL) {
+if (configuredDatabaseUrl) {
   // Use Neon / Standard PostgreSQL
   const { Pool } = require('pg');
   console.log('🔗 Connecting to remote PostgreSQL via DATABASE_URL...');
   const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: { rejectUnauthorized: false }
+    connectionString: configuredDatabaseUrl,
+    ssl: { rejectUnauthorized: false },
+    connectionTimeoutMillis: 10000,
+    idleTimeoutMillis: 30000,
+    max: 5
   });
 
   dbInstance = {

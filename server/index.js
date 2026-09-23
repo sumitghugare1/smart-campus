@@ -39,6 +39,11 @@ app.use(express.urlencoded({ extended: true }));
 // Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Browsers and Vercel probe this path automatically. The API does not need an icon.
+app.get('/favicon.ico', (req, res) => {
+  res.status(204).end();
+});
+
 // API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobsRoutes);
@@ -52,6 +57,10 @@ app.use('/api/analytics', analyticsRoutes);
 app.use('/api/manager', managerRoutes);
 
 // Root / Health check
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', app: 'QTalk NextGen API' });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',

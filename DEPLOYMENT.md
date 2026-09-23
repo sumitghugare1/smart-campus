@@ -23,6 +23,14 @@ DATABASE_URL=your Neon PostgreSQL connection string
 CLIENT_URL=https://your-frontend.vercel.app
 ```
 
+Copy the **pooled Node.js connection string** from Neon exactly. It should begin with
+`postgresql://` and contain a real `neon.tech` hostname. Do not paste the placeholder
+from `.env.example`, do not include surrounding quotes, and create the variable for
+Production, Preview, and Development environments.
+
+If your Neon project provides `POSTGRES_URL` instead, the backend accepts that name as
+well, but `DATABASE_URL` is preferred.
+
 Generate a long private `JWT_SECRET`; do not reuse the demo value in production.
 
 The backend project uses:
@@ -39,6 +47,9 @@ https://your-backend.vercel.app/api/health
 ```
 
 It should return a JSON response with `status: "ok"`.
+
+The backend root also responds at `https://your-backend.vercel.app/` and can be used
+as a quick Vercel function check.
 
 ## 3. Seed Neon
 
