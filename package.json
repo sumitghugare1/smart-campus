@@ -1,0 +1,12 @@
+{
+  "name": "qtalk-nextgen-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Smart Campus Placement and Communication Platform",
+  "scripts": {
+    "server": "node server/index.js",
+    "client": "npm --prefix client run dev",
+    "seed": "node server/seed.js",
+    "test-backend": "node server/test-api.js"
+  }
+}

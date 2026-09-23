@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment files
+.env
+.env.example
+.env.*
+!.env.example
+
+# Build outputs
+/dist/
+/build/
+/.next/
+/out/
+coverage/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database / local runtime data
+server/data/
+server/uploads/
+*.sqlite
+*.sqlite3
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Optional: Keep project docs tracked
+!QTalk_NextGen_Final_Project_Document.md
+!ENV_SETUP_GUIDE.md
