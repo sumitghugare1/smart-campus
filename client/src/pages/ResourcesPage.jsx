@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { api } from '../api';
+import { api, API_ORIGIN } from '../api';
 import { BookOpen, FileText, Download, PlusCircle, Search, Filter, X } from 'lucide-react';
 
 export default function ResourcesPage() {
@@ -191,7 +191,7 @@ export default function ResourcesPage() {
               <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '0.75rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>PDF Material</span>
                 <a
-                  href={`/${res.file_url}`}
+                  href={`${API_ORIGIN}/${res.file_url.replace(/^\/+/, '')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="btn btn-outline btn-sm"

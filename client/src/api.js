@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+export const API_ORIGIN = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE = `${API_ORIGIN}/api`;
 
 export async function apiRequest(endpoint, options = {}) {
   const token = localStorage.getItem('qtalk_token');
