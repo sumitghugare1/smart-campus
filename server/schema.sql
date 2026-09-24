@@ -136,9 +136,16 @@ CREATE TABLE IF NOT EXISTS batch_resources (
   trainer_id INT REFERENCES users(user_id) ON DELETE CASCADE,
   title VARCHAR(150) NOT NULL,
   file_url TEXT NOT NULL,
+  file_data BYTEA,
+  file_name VARCHAR(255),
+  mime_type VARCHAR(100),
   category VARCHAR(50) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+ALTER TABLE batch_resources ADD COLUMN IF NOT EXISTS file_data BYTEA;
+ALTER TABLE batch_resources ADD COLUMN IF NOT EXISTS file_name VARCHAR(255);
+ALTER TABLE batch_resources ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100);
 
 CREATE TABLE IF NOT EXISTS interview_experiences (
   experience_id SERIAL PRIMARY KEY,

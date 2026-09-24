@@ -116,7 +116,15 @@ Redeploy the backend after changing this value.
 
 ## File uploads
 
-The current backend stores uploads on the local filesystem. Vercel functions have ephemeral, read-only runtime filesystems, so the upload endpoint is not production-safe. Replace local `multer` storage with object storage such as Cloudinary, S3, or Cloudflare R2, and store the public object URL in `batch_resources.file_url` before enabling uploads in production.
+Uploaded files are stored in Neon PostgreSQL as `BYTEA` values. This avoids Vercel's
+read-only filesystem and requires no additional storage provider. The first resource
+request applies the nullable `file_data`, `file_name`, and `mime_type` columns to an
+existing `batch_resources` table automatically; `schema.sql` contains the same migration
+for fresh databases.
+
+This is intended for the free/small deployment footprint: uploads are limited to 25 MB
+and consume Neon database storage. For larger files or high download volume, move the
+same upload contract to object storage such as Cloudinary, S3, or Cloudflare R2.
 
 ## Local development after these changes
 

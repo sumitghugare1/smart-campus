@@ -4,9 +4,22 @@ const db = require('../db');
 const { authenticateToken, requireRole } = require('../middleware/auth');
 const upload = require('../middleware/upload');
 
+let resourceStorageReady;
+const ensureResourceStorage = () => {
+  if (!resourceStorageReady) {
+    resourceStorageReady = db.query(`
+      ALTER TABLE batch_resources ADD COLUMN IF NOT EXISTS file_data BYTEA;
+      ALTER TABLE batch_resources ADD COLUMN IF NOT EXISTS file_name VARCHAR(255);
+      ALTER TABLE batch_resources ADD COLUMN IF NOT EXISTS mime_type VARCHAR(100);
+    `);
+  }
+  return resourceStorageReady;
+};
+
 // GET /api/resources (List resources with optional category & batch filtering)
 router.get('/', authenticateToken, async (req, res) => {
   try {
+    await ensureResourceStorage();
     const { category, batch_id, search } = req.query;
     let query = `
       SELECT r.*, u.full_name AS trainer_name, b.batch_code
@@ -41,9 +54,33 @@ router.get('/', authenticateToken, async (req, res) => {
   }
 });
 
+// GET /api/resources/:resourceId/file (Serve a file stored in Neon)
+router.get('/:resourceId/file', async (req, res) => {
+  try {
+    await ensureResourceStorage();
+    const result = await db.query(
+      `SELECT file_data, file_name, mime_type FROM batch_resources WHERE resource_id = $1`,
+      [req.params.resourceId]
+    );
+
+    if (result.rows.length === 0 || !result.rows[0].file_data) {
+      return res.status(404).json({ error: 'Stored file not found' });
+    }
+
+    const resource = result.rows[0];
+    res.type(resource.mime_type || 'application/octet-stream');
+    res.set('Content-Disposition', `inline; filename="${(resource.file_name || 'resource').replace(/["\\]/g, '')}"`);
+    res.send(resource.file_data);
+  } catch (err) {
+    console.error('Resource download error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // POST /api/resources (Trainers/Admin upload PDF / study material)
 router.post('/', authenticateToken, requireRole('TRAINER', 'ADMIN'), upload.single('file'), async (req, res) => {
   try {
+    await ensureResourceStorage();
     const { title, category, batch_id } = req.body;
 
     if (!title || !category || !batch_id) {
@@ -62,7 +99,7 @@ router.post('/', authenticateToken, requireRole('TRAINER', 'ADMIN'), upload.sing
 
     let fileUrl = '';
     if (req.file) {
-      fileUrl = `uploads/${req.file.filename}`;
+      fileUrl = `/api/resources/file-pending`;
     } else if (req.body.file_url) {
       fileUrl = req.body.file_url;
     } else {
@@ -72,11 +109,30 @@ router.post('/', authenticateToken, requireRole('TRAINER', 'ADMIN'), upload.sing
     const assignedBatchId = batch_id;
 
     const insertRes = await db.query(
-      `INSERT INTO batch_resources (batch_id, trainer_id, title, file_url, category)
-       VALUES ($1, $2, $3, $4, $5)
+      `INSERT INTO batch_resources
+       (batch_id, trainer_id, title, file_url, file_data, file_name, mime_type, category)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
        RETURNING *`,
-      [assignedBatchId, req.user.userId, title, fileUrl, category]
+      [
+        assignedBatchId,
+        req.user.userId,
+        title,
+        fileUrl,
+        req.file ? req.file.buffer : null,
+        req.file ? req.file.originalname : null,
+        req.file ? req.file.mimetype : null,
+        category
+      ]
     );
+
+    if (req.file) {
+      fileUrl = `/api/resources/${insertRes.rows[0].resource_id}/file`;
+      await db.query(
+        `UPDATE batch_resources SET file_url = $1 WHERE resource_id = $2`,
+        [fileUrl, insertRes.rows[0].resource_id]
+      );
+      insertRes.rows[0].file_url = fileUrl;
+    }
 
     res.status(201).json({
       message: 'Resource uploaded successfully',
