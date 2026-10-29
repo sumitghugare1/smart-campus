@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import Navbar from './components/Navbar';
+import WorkspaceShell from './components/WorkspaceShell';
 import NotificationDrawer from './components/NotificationDrawer';
 
 // Pages
@@ -89,16 +89,12 @@ function MainApp() {
 
   return (
     <div className="app-container">
-      {/* Modern Navigation Header */}
-      <Navbar
+      <WorkspaceShell
         activePage={activePage}
         onNavigate={(page) => setActivePage(page)}
         onOpenNotifications={() => setNotificationsOpen(true)}
-      />
-
-      {/* Main Page Content */}
-      <main className="main-content">
-        {activePage === 'dashboard' && renderDashboardByRole()}
+      >
+        {(activePage === 'dashboard' || activePage === 'activity' || activePage === 'teams' || activePage === 'calendar' || activePage === 'files') && renderDashboardByRole()}
 
         {activePage === 'jobs' && (
           <JobsPage
@@ -141,7 +137,7 @@ function MainApp() {
         {activePage === 'resources' && <ResourcesPage />}
 
         {activePage === 'interviews' && <InterviewBankPage />}
-      </main>
+      </WorkspaceShell>
 
       {/* Notification Drawer */}
       <NotificationDrawer
