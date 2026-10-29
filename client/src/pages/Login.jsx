@@ -23,11 +23,25 @@ export default function Login({ onNavigateToRegister }) {
   };
 
   return (
-    <div style={{ minHeight: '85vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
-      <div style={{ maxWidth: '440px', width: '100%' }}>
+    <main className="auth-page">
+      <div className="auth-layout">
+        <section className="auth-intro">
+          <div className="auth-brand-mark"><Sparkles size={17} /></div>
+          <p className="auth-eyebrow">QTalk Workspace</p>
+          <h1>One place for every team to move forward.</h1>
+          <p className="auth-intro-copy">Connect placement teams, trainers, students, and hiring partners in a workspace shaped around how your organization works.</p>
+          <div className="auth-proof"><span className="auth-proof-dot" /> Your organization workspace is ready</div>
+        </section>
 
-        {/* Login Form */}
-        <div className="glass-card" style={{ padding: '2.5rem' }}>
+        <section className="auth-card glass-card">
+          <div className="auth-card-heading">
+            <div>
+              <p className="auth-kicker">Welcome back</p>
+              <h2>Sign in to your workspace</h2>
+              <p>Continue conversations, tasks, and placement work.</p>
+            </div>
+            <div className="auth-secure"><Lock size={14} /> Secure</div>
+          </div>
           <div style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.25rem 0.6rem', borderRadius: 9999, background: 'rgba(99, 102, 241, 0.15)', color: '#818cf8', fontSize: '0.75rem', fontWeight: 600, marginBottom: '0.75rem' }}>
               <Sparkles size={12} />
@@ -103,9 +117,8 @@ export default function Login({ onNavigateToRegister }) {
               Create student account
             </button>
           </div>
-        </div>
-
+        </section>
       </div>
-    </div>
+    </main>
   );
 }

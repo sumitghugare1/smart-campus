@@ -67,8 +67,8 @@ export default function Register({ onNavigateToLogin }) {
   };
 
   return (
-    <div style={{ minHeight: '85vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1rem' }}>
-      <div className="glass-card" style={{ maxWidth: '600px', width: '100%', padding: '2.5rem' }}>
+    <main className="auth-page auth-page-register">
+      <div className="auth-card glass-card">
         <button
           onClick={onNavigateToLogin}
           className="btn btn-outline btn-sm"
@@ -212,6 +212,6 @@ export default function Register({ onNavigateToLogin }) {
           </button>
         </form>
       </div>
-    </div>
+    </main>
   );
 }
