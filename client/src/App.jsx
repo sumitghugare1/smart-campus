@@ -16,6 +16,8 @@ import JobDetailsPage from './pages/JobDetailsPage';
 import MyApplicationsPage from './pages/MyApplicationsPage';
 import CreateJobPage from './pages/CreateJobPage';
 import ChatPage from './pages/ChatPage';
+import TeamWorkspace from './components/TeamWorkspace';
+import { ActivityOverview, FilesOverview } from './components/WorkspaceOverview';
 import ResourcesPage from './pages/ResourcesPage';
 import InterviewBankPage from './pages/InterviewBankPage';
 
@@ -132,7 +134,13 @@ function MainApp() {
 
         {activePage === 'analytics' && <AdminAnalyticsPage />}
 
+        {activePage === 'activity' && <ActivityOverview />}
+
         {activePage === 'chat' && <ChatPage />}
+
+        {activePage === 'teams' && <TeamWorkspace />}
+
+        {activePage === 'files' && <FilesOverview />}
 
         {activePage === 'resources' && <ResourcesPage />}
 
